@@ -49,7 +49,7 @@ class Details extends Component {
             categories: [],
             cartItems: [],
             totalCartItemsValue: 0.0,
-            totalCartItems:0
+            totalCartItems: 0
         }
     }
 
@@ -166,10 +166,12 @@ onClickCheckoutButton = state => () => {
         return(
             <div className="details-container">
                 <Header 
-                showLink={true}
+                showLogo={true}
+                history={this.props.history}
+                showSearchBox={false}
                 showLoginModal={true}
-                showProfile={true}
-                enableMyAccount={true}/>
+                showProfile={false}
+                enableMyAccount={false}/>
                 <div className="restaurant-info">
                     <div className="restaurant-image">
                         <span>

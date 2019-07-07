@@ -1,4 +1,4 @@
-import React,  { Component } from "react";
+import React, { Component } from "react";
 import "./Home.css";
 import * as Constants from "../../common/Constants";
 import * as Utils from "../../common/Utils";
@@ -13,7 +13,6 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 
 
-
 // inline styles for Material-UI components
 const styles = theme => ({
   root: {
@@ -21,25 +20,37 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-    backgroundColor: theme.palette.background.paper
-
+    backgroundColor: theme.palette.background.paper,
+    
   },
+    grow: {
+        flexGrow: 1,
+    },
+    input: {
+        display: 'none',
+    },
+    gridListMain: {
+        transform: 'translateZ(0)',
+        cursor: 'pointer',
+        margin: "15px !important"
+    },
 });
 
 class Home extends Component {
 
  /* constructor() {
     super();
-    this.searchRestaurantByRestaurantName = this.searchRestaurantByRestaurantName.bind(this);
-    this.getRestaurantByRestaurantName = this.getRestaurantByRestaurantName.bind(this);
+    //this.searchRestaurantByRestaurantName = this.searchRestaurantByRestaurantName.bind(this);
+    //this.getRestaurantByRestaurantName = this.getRestaurantByRestaurantName.bind(this);
   }*/
   state = {
-    isRestaurantDataLoaded: false,
+    //isRestaurantDataLoaded: false,
     restaurantData: [], // array containing all the restaurants info available
-    restaurantDataByName:[],
+    //restaurantDataByName:[],
     //isDataLoaded: true,
-    filteredRestaurantData: []// array containing all the restaurants info filtered using search box
-    
+    //filteredRestaurantData: [],// array containing all the restaurants info filtered using search box
+    restaurant_name: "",
+    loggedIn: sessionStorage.getItem("access-token") == null ? false : true,//Logged in status is null if there is no accesstoken in sessionstorage
   };
 
   /**
@@ -50,7 +61,6 @@ class Home extends Component {
     this.getAllRestaurantData();
     this.getRestaurantByRestaurantName();
   }
-
 
 /**
   * Function to get all the restaurant data on the home page
@@ -86,10 +96,12 @@ class Home extends Component {
  * @param event default parameter on which the event is called
  * @memberof Home
  */
+/*CHECK this API n complete search Box implemetation*/
  getRestaurantByRestaurantName = () => {
    //this.setState({ searchValue : event.target.value });
-  let requestparamsObj = { 'restaurant_name': 'Lion Heart' }
-  const requestUrl = "http://localhost:8080/api/restaurant/name/{restaurantName}";
+  
+  let requestparamsObj =  {"restaurant_name":"Lion Heart"};
+  const requestUrl = "http://localhost:8080/api/restaurant/name/"+this.state.restaurant_name;
   const that = this;
   Utils.makeApiCall(
       requestUrl,
@@ -112,11 +124,9 @@ class Home extends Component {
       () => { }
   );
 };
-
-
-
-restaurantDetailClickHandler = (restaurantId) => {
-  this.props.history.push('/restaurant/' + restaurantId );
+  
+restaurantClickHandler = (restaurantId) => {
+  this.props.history.push('/restaurant/' + restaurantId);
 }
 
   /**
@@ -137,24 +147,22 @@ restaurantDetailClickHandler = (restaurantId) => {
       <div>
         <div>
           <Header
-            id={this.props.match.params.id}
-            showLink={true}
-            showSearch={true}
-            searchImageByDescription={this.searchImageByDescription}
+            //baseUrl={this.props.baseUrl}
+            history={this.props.history}
+            showLogo={true}
+            showSearchBox={true}
+            //searchRestaurantByRestaurantName={this.searchRestaurantByRestaurantName}
             showLoginModal={true}
-            showProfile={true}
             enableMyAccount={true}
-          /></div>
-        <div >
-          <br />
-          <div className={classes.root}>
-            <GridList cellHeight={400} className={classes.gridListMain} cols={4}>
+          />
+          <div className="restaurants-main-container">
+            <GridList cellHeight ={400} className={classes.gridListMain} cols={4}>
               {this.state.restaurantData.map(restaurant => (
-                <GridListTile onClick={() => this.restaurantDetailClickHandler(restaurant.id)} key={"restaurant" + restaurant.id}  cols={restaurant.cols || 1} >
-                  <Grid container className={classes.root}  >
-                    <Grid item >
+                <GridListTile key={"restaurant" + restaurant.id} onClick={() => this.restaurantClickHandler(restaurant.id)} >
+                  <Grid container className={classes.root} >
+                    <Grid item>
                       <RestaurantCard
-                        restaurant={restaurant} 
+                        restaurant={restaurant}
                       />
                     </Grid>
                   </Grid>

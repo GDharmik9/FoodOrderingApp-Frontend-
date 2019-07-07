@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import './Header.css';
-import * as Utils from "../../common/Utils";
+// import * as Utils from "../../common/Utils";
 import * as UtilsUI from "../../common/UtilsUI";
 import * as Constants from "../../common/Constants";
+import { Link } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import Modal from 'react-modal';
@@ -18,8 +19,6 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import accountCircle from '../../assets/icon/accountCircle.svg';
 import FastFoodIcon from '@material-ui/icons/Fastfood';
 import SearchIcon from '@material-ui/icons/Search';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 
 // custom styles for upload modal
@@ -52,20 +51,6 @@ TabContainer.propTypes = {
 
 // inline styles for Material-UI components
 const styles = {
-    root: {
-        width: '100%',
-    },
-    grow: {
-        flexGrow: 1,
-    },
-    input: {
-        display: 'none',
-    },
-    gridListMain: {
-        transform: 'translateZ(0)',
-        cursor: 'pointer',
-
-    },
     searchInput: {
         width: "80%"
     }
@@ -94,6 +79,8 @@ class Header extends Component {
         this.inputRegisterPasswordChangeHandler = this.inputRegisterPasswordChangeHandler.bind(this);
         this.inputContactChangeHandler = this.inputContactChangeHandler.bind(this);
         this.signupNewCustomer = this.signupNewCustomer.bind(this);
+        this.logoutClickHandler = this.logoutClickHandler.bind(this);
+        this.openUserProfileHandler = this.openUserProfileHandler.bind(this);
     }
 
         state = {
@@ -123,12 +110,15 @@ class Header extends Component {
             registerPassword: Constants.DisplayClassname.DISPLAY_NONE
         },
         modalIsOpen: false,//login modal state is closed
-        menuIsDroppedDown: false,//Menu in login form is not dropped down
+        // menuIsDroppedDown: false,//Menu in login form is not dropped down
         value: 0,//Initial value for tab container is set to '0'
-        signupSuccess: false,//signup status is false
-        snackbarIsopen: false,
-        snackbarclose:true,
-        //loggedIn: sessionStorage.getItem("access-token") == null ? false : true,//Logged in status is null if there is no accesstoken in sessionstorage
+        loginSnackBarIsOpen: false,
+        registerSnackBarIsOpen: false,
+        showUserProfileDropDown: false, // boolean value indicating if the user profile dropdown is open; TRUE for open and FALSE for closed
+        loggedIn: sessionStorage.getItem("access-token") == null ? false : true,//Logged in status is null if there is no accesstoken in sessionstorage
+        loggedInUserInfo:[],
+        signupFailStatus: [],
+        
     
     };
 
@@ -139,7 +129,7 @@ class Header extends Component {
     openModalHandler = () => {
         this.setState({
             modalIsOpen: true,
-            signupSuccess: false,
+            // signupSuccess: false,
             //loggedIn: sessionStorage.getItem("access-token") == null ? false : true
         });
     }
@@ -274,15 +264,18 @@ class Header extends Component {
         let that = this;
         xhrLogin.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
+                if (xhrLogin.status === 200 || xhrLogin.status === 201){
                 sessionStorage.setItem("uuid", JSON.parse(this.responseText).id);
                 sessionStorage.setItem("access-token", xhrLogin.getResponseHeader("access-token"));
 
                 that.setState({
-                    loggedIn: true
+                    loggedIn: true,
+                    loginSnackBarIsOpen: true,
                 });
 
                 that.closeModalHandler();
             }
+        }
         });
 
         xhrLogin.open("POST",  "http://localhost:8080/api/customer/login");
@@ -348,35 +341,69 @@ class Header extends Component {
             "last_name": this.state.signupFormUserValues.lastname,
             "password": this.state.signupFormUserValues.registerPassword
         };
-        let requestHeaderObj = { "Content-Type": "application/json" };
-        {
-            const requestUrl = "http://localhost:8080/api/customer/signup";
-            const that = this;
-            Utils.makeApiCall(
-                requestUrl,
-                null,
-                dataSignup,
-                Constants.ApiRequestTypeEnum.POST,
-                requestHeaderObj,
-                responseText => {
-                    that.setState({
-                        signupSuccess: true,
-                        snackbarIsopen:true,
-                        
-                    });
-                },
-                () => { }
-            );
-         }
+      
+        let xhrSignup = new XMLHttpRequest();
+        let that = this;
+        xhrSignup.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                if (xhrSignup.status === 200 || xhrSignup.status === 201){
+                that.setState({
+                    signupSuccess: true,
+                    registerSnackBarIsOpen: true
+                });
+            }
+            /*else{
+                
+               that.setState({
+                signupFailStatus: JSON.parse(this.responseText)
+             });
+
+            }*/
+        }
+        });
+
+        xhrSignup.open("POST", "http://localhost:8080/api/customer/signup");
+        xhrSignup.setRequestHeader("Content-Type", "application/json");
+        xhrSignup.setRequestHeader("Cache-Control", "no-cache");
+        xhrSignup.send(dataSignup);
+        //console.log(this.state.signupFailStatus.message);
 
     };
-
-    snackbarCloseHandler = (e) => {
-        this.setState({ snackbarIsopen:false });
-    }
-    searchValueChangeHandler = (e) => {
-        this.setState({ searchValue: e.target.value });
-    }
+ 
+        /* CHECK => why responseText shows diabled , n why snack bar doesnt open on successful signup*/
+    
+        loginSnackBarCloseHandler = (e) => {
+            this.setState({ loginSnackBarIsOpen: false });
+        }
+        registerSnackBarCloseHandler = (e) => {
+            this.setState({ registerSnackBarIsOpen: false });
+        }
+        searchValueChangeHandler = (e) => {
+            this.setState({ searchValue: e.target.value });
+        }
+    
+        /**
+          * Event handler called when the profile icon inside the header is clicked to toggle the user profile dropdown
+          * @memberof Header
+          */
+        openUserProfileHandler = () => {
+            this.setState({
+                showUserProfileDropDown: !this.state.showUserProfileDropDown
+            });
+        };
+    
+        /**
+         * Event handler called when the logout menu item is clicked inside the user profile dropdown to log a user out of the application
+         * @memberof Header
+         */
+        logoutClickHandler = () => {
+            sessionStorage.removeItem("access-token");
+            sessionStorage.removeItem("user-details");
+            this.props.history.push({
+                pathname: "/"
+            });
+        };
+    
     
 
   
@@ -390,7 +417,7 @@ class Header extends Component {
 
         // logo to be rendered inside the header
         let logoToRender = null;
-        if (this.props.showLink) {
+        if (this.props.showLogo) {
             logoToRender = (
                 <div className="fastfood-icon-container">
                     <FastFoodIcon />
@@ -400,7 +427,7 @@ class Header extends Component {
 
         // search box to be rendered inside the header
         let searchBoxToRender = null;
-        if (this.props.showSearch) {
+        if (this.props.showSearchBox) {
             searchBoxToRender = (
                 <div className="search-icon-container">
                     <div className="search-icon">
@@ -421,7 +448,7 @@ class Header extends Component {
         let loginButtonModalToRender = null;
         if (this.props.showLoginModal) {
             loginButtonModalToRender = (
-                <div className="login-button-container">
+                <div className="header-login-btn-container">
                     <Button variant="contained" color="default" onClick={this.openModalHandler} >
                         <img src={accountCircle} className="accountCircle-logo" alt="accountCircle" />Login</Button>
                     <Modal
@@ -518,118 +545,82 @@ class Header extends Component {
             );
         }
 
-        // user profile icon to be rendered inside the header
-        /*let profileIconButtonToRender = null;
-        if (this.props.showProfile) {
-          profileIconButtonToRender = (
-            <div className="header-profile-btn-container">
-              <IconButton
-                key="close"
-                aria-label="Close"
-                onClick={this.profileIconClickHandler}
-                className={classes.profileIconButton}
-              >
-                <img
-                  src={this.state.currentUserDetails.profileImage}
-                  className="user-profile-image"
-                  alt=""
-                />
-              </IconButton>
-        
-              {this.state.showUserProfileDropDown ? (
-                <div className="user-profile-drop-down">
-                  {this.props.enableMyAccount ? (
-                    <div>
-                      <Link to="/profile" className="my-account-dropdown-menu-item">
-                        My Account
-                      </Link>
-                      <hr />
-                    </div>
-                  ) : null}
-                  <div
-                    onClick={this.logoutClickHandler}
-                    className="logout-dropdown-menu-item"
-                  >
-                    Logout
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          );
-        }
-        {profileIconButtonToRender} to be placed in Muitheme provider if required
-        */
+         // user profile icon to be rendered inside the header
+         let profileIconButtonToRender = null;
+         if (this.props.showProfile) {
+             profileIconButtonToRender = (
+                 <div className="header-user-profile-container">
+                     <div id="user-profile" onClick={this.openUserProfileHandler}><div><img src={accountCircle} className="accountCircle-logo" alt="accountCircle" /></div><div id="user-right">{sessionStorage.getItem("user-details")}</div></div>
+ 
+                     {this.state.showUserProfileDropDown ? (
+                         <div className="user-profile-drop-down">
+                             {this.props.enableMyAccount ? (
+                                 <div>
+                                     <Link to="/profile" className="my-account-dropdown-menu-item">
+                                         My Account
+                       </Link>
+                                     <hr />
+                                 </div>
+                             ) : null}
+                             <div
+                                 onClick={this.logoutClickHandler}
+                                 className="logout-dropdown-menu-item"
+                             >
+                                 Logout
+                   </div>
+                         </div>
+                     ) : null}
+                 </div>
+             );
+         }
+ 
+          //loginsnackbar component to be rendered upon successful login
+          let loginSnackBarToRender = null;
+          if (this.state.loginSnackBarIsOpen) {
+              loginSnackBarToRender = (
+                 <Snackbar
+                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
+                 open={this.state.loginSnackBarIsOpen}
+                 autoHideDuration={3000}
+                 onClose={this.loginSnackBarCloseHandler}
+                 ContentProps={{ 'aria-describedby': 'message-id', }}
+                 message={<span id="message-id">Logged in successfully!</span>}
+                 />
+              );
+          }
+ 
+         //registersnackbar component to be rendered upon successful signup
+         let registerSnackBarToRender = null;
+         if (this.state.registerSnackBarIsOpen) {
+             registerSnackBarToRender = (
+                 <Snackbar
+                     anchorOrigin={{ vertical: 'bottom', horizontal: 'left', }}
+                     open={this.state.registerSnackBarIsOpen}
+                     autoHideDuration={3000}
+                     onClose={this.registerSnackBarCloseHandler}
+                     ContentProps={{ 'aria-describedby': 'message-id', }}
+                     message={<span id="message-id">Registered successfully! Please login now!</span>}
+                     />
+             );
+         }
+ 
         return (
             <MuiThemeProvider>
-                <div className="app-header-container">
-                    <div className="header-logo-container">{logoToRender}</div>
-                    {searchBoxToRender}
-                    {loginButtonModalToRender}
-                </div>
-            </MuiThemeProvider>
+            <div className="header-main-container">
+                <div className="header-logo-container">{logoToRender}</div>
+                {searchBoxToRender}
+                {loginButtonModalToRender}
+                {profileIconButtonToRender}
+                {loginSnackBarToRender}
+                {registerSnackBarToRender}    
+            </div>    
+        </MuiThemeProvider>
         );
 
     }
 }
 
 
-
-
-
-
-
-/* <div className= "cardStyle">
-     <br />
-     <GridList cellHeight={"auto"} className={classes.gridListMain} cols={4}>
-         {restaurantInfo.map(restaurant => (
-
-             <GridListTile key={"restaurant" + restaurant.id} cols={restaurant.cols || 1}>
-                 <Grid container className={classes.root} >
-                     <Grid item>
-                     <Card className={classes.card}>
-                     <CardActionArea>
-                 <CardMedia
-                   className={classes.media}
-                   image={restaurant.photo_URL}
-
-                  />
-                 <CardContent>
-                   <Typography gutterBottom variant="h5" component="h2">
-                     {restaurant.restaurant_name}
-                   </Typography>
-                   <br/><br/>
-                   <Typography gutterBottom variant="body1" color="textSecondary" component="p">
-                       {restaurant.categories}
-                   </Typography>
-                   <br/><br/>
-                   <div id="last-row">
-         
-                    <Button variant="contained" color="inherit" id="left-button">
-                   <Star id="star-icon"/>{restaurant.customer_rating}({restaurant.number_customers_rated})
-                   </Button>
-                   
-                   
-                   <Typography gutterBottom variant="body1" color="textSecondary" component="p" id="right-avg-price">
-                    {restaurant.average_price}  for two 
-                   </Typography>
-                     
-             
-                   </div>
-                 </CardContent>
-               </CardActionArea>
-               </Card>
-               </Grid>
-               </Grid>
-               </GridListTile>
-          ))};
-          
-     </GridList>
-
- </div>
-</div>
-)
-}
-}*/
 
 Header.propTypes = {
     classes: PropTypes.object.isRequired
