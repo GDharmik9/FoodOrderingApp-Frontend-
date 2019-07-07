@@ -178,7 +178,7 @@ onClickCheckoutButton = state => () => {
                 history={this.props.history}
                 showSearchBox={false}
                 showLoginModal={true}
-               
+                showProfile={false}
                 enableMyAccount={false}/>
                 <div className="restaurant-info">
                     <div className="restaurant-image">

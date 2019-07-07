@@ -426,7 +426,7 @@ class Checkout extends Component {
                  history={this.props.history}
                  showSearchBox={false}
                  showLoginModal={false}
-                
+                 showProfile={true}
                  enableMyAccount={false}/>
                 <div className="main-body-container">
                     <div>
