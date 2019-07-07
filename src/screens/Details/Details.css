@@ -117,9 +117,13 @@
 }
 
 .added-item{
-    min-width: 45%;
+    min-width: 43%;
 }
 
+.badge{
+    margin: -0.25;
+    z-index: 0;
+}
 
 
 .card{

@@ -53,7 +53,7 @@ const RestaurantCard = function (props) {
                 <Star id="star-icon" />{restaurant.customer_rating}({restaurant.number_customers_rated})
               </Button>
             <Typography gutterBottom variant="body1" color="textSecondary" component="p" id="right-avg-price">
-            <i class="fa fa-inr" aria-hidden="true"></i>{restaurant.average_price}  for two
+            <i className="fa fa-inr" aria-hidden="true"></i> {restaurant.average_price}  for two
               </Typography>
         </div>
     </CardContent>

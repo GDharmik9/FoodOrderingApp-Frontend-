@@ -4,6 +4,7 @@ import Login from "./login/Login";
 import Home from "./home/Home";
 import Profile from "./profile/Profile";
 import Details from "./Details/Details";
+// import Checkout from "./checkout/Checkout";
 
 /**
  * Class component for controller
@@ -20,8 +21,10 @@ class Controller extends Component {
           <Route exact path="/" render={(props) => <Home {...props} baseUrl={this.baseUrl} />}/>
 
           <Route  path='/restaurant/:restaurantId' render={(props) => <Details {...props} baseUrl={this.baseUrl}/>} />
+           
+          {/* <Route path='/checkout' render={(props) => <Checkout {...props} baseUrl={this.baseUrl} />} /> */}
 
-          <Route path="/login" render={(props) => <Login {...props} baseUrl={this.baseUrl} />}/>
+          {/* <Route path="/login" render={(props) => <Login {...props} baseUrl={this.baseUrl} />}/> */}
 
           <Route path="/profile" render={(props) => <Profile {...props} baseUrl={this.baseUrl} />}/>
         </div>

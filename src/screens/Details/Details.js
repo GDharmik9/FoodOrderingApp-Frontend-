@@ -30,9 +30,7 @@ const styles = theme => ({
     snackbar: {
         margin: theme.spacing.unit,
     },
-    margin: {
-        margin: theme.spacing.unit * -0.25,
-    },
+    
 });
 
 
@@ -49,7 +47,8 @@ class Details extends Component {
             categories: [],
             cartItems: [],
             totalCartItemsValue: 0.0,
-            totalCartItems: 0
+            totalCartItems: 0,
+            
         }
     }
 
@@ -124,6 +123,7 @@ updateTotalCartItemsValue(isAdded, price, quantity) {
 
 addCartItemClickHandler = (item) => {
     item.quantity = item.quantity + 1;
+    item.totalPrice = item.quantity * item.price;
     this.setState({ open: true, cartNotificationMessage: 'Item quantity increased by 1!' });
     this.updateTotalCartItemsValue(true, item.price, item.quantity);
     
@@ -152,11 +152,19 @@ handleClose = () => {
 
 
 onClickCheckoutButton = state => () => {
-    if(this.state.cartItems.length > 0){
+    if(this.state.totalCartItems === 0 ){
+        this.setState({open: true, cartNotificationMessage: "Please add an item to your cart!"})
+        return;
+    }
+    // if (sessionStorage.getItem("access-token") === null) {
+    //     this.setState({open: true, cartNotificationMessage:  "Please login first!"})
+    //     return;
+    // }
+
     this.props.history.push({
-        pathname: '/checkout',
+        pathname: "/checkout",
         state: { cartItems: this.state.cartItems, totalCartItemsValue: this.state.totalCartItemsValue }
-    })}
+    })
 };
 
     render(){
@@ -170,12 +178,12 @@ onClickCheckoutButton = state => () => {
                 history={this.props.history}
                 showSearchBox={false}
                 showLoginModal={true}
-                showProfile={false}
+               
                 enableMyAccount={false}/>
                 <div className="restaurant-info">
                     <div className="restaurant-image">
                         <span>
-                        <img className="restaurant-img" src={restaurantData.photo_URL} alt="featured restaurant image" />
+                        <img className="restaurant-img" src={restaurantData.photo_URL} alt="featured restaurant" />
                         </span>
                     </div>
                     <div className="restaurant-details">
@@ -256,7 +264,7 @@ onClickCheckoutButton = state => () => {
                           <CardContent>
                             <div>
                              <Typography gutterBottom variant="h6" component="h4">
-                                 <Badge badgeContent={this.state.totalCartItems} color="primary" classes={{ badge: classes.margin }} >
+                                 <Badge badgeContent={this.state.totalCartItems} color="primary" className="badge" >
                                    <ShoppingCart/>
                                  </Badge>
                                  <span style={{marginLeft:'20px'}}>My Cart</span>
@@ -290,13 +298,13 @@ onClickCheckoutButton = state => () => {
                                               </IconButton>
                                     </span> </div>
                                     <span> 
-                                     <FontAwesomeIcon icon="rupee-sign"/>  {item.totalPrice}</span> 
+                                     <FontAwesomeIcon icon="rupee-sign"/> {(item.totalPrice).toFixed(2)}</span> 
                                  </div>
                             ))}
                             <br/>
                             <div>
                                 <span  className="item-total">TOTAL AMOUNT</span>
-                                <span className="item-rupee"><FontAwesomeIcon icon="rupee-sign"/>  {this.state.totalCartItemsValue}</span>
+                                <span className="item-rupee"><FontAwesomeIcon icon="rupee-sign"/>  {(this.state.totalCartItemsValue).toFixed(2)}</span>
                             </div>
                             <br/>
                             <Button className="cart-button"  variant="contained" color="primary"
