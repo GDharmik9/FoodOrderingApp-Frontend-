@@ -116,8 +116,7 @@ updateTotalCartItemsValue(isAdded, price, quantity) {
     }else{
         this.setState({totalCartItems: this.state.totalCartItems - 1});
     }
-
-    this.setState({ totalCartItemsValue: newTotalCartItemsValue });
+   this.setState({ totalCartItemsValue: newTotalCartItemsValue });
 }
 
 
@@ -163,7 +162,8 @@ onClickCheckoutButton = state => () => {
 
     this.props.history.push({
         pathname: "/checkout",
-        state: { cartItems: this.state.cartItems, totalCartItemsValue: this.state.totalCartItemsValue }
+        cartItems: this.state.cartItems,
+        totalCartItemsValue: this.state.totalCartItemsValue
     })
 };
 
