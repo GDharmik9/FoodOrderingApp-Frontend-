@@ -155,10 +155,10 @@ onClickCheckoutButton = state => () => {
         this.setState({open: true, cartNotificationMessage: "Please add an item to your cart!"})
         return;
     }
-    // if (sessionStorage.getItem("access-token") === null) {
-    //     this.setState({open: true, cartNotificationMessage:  "Please login first!"})
-    //     return;
-    // }
+    if (sessionStorage.getItem("access-token") === null) {
+        this.setState({open: true, cartNotificationMessage:  "Please login first!"})
+        return;
+    }
 
     this.props.history.push({
         pathname: "/checkout",

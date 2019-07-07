@@ -140,7 +140,6 @@ class Checkout extends Component {
             cartItems: [],
             paymentModes: [],
             addresses: [],
-            accessToken: "Bearer eyJraWQiOiJjZjRjZDc1OS1kODk0LTQzOTMtOGRlYy00NzU3NTViMmYxNTQiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiI5ODkzZGM0My0wN2JjLTRkMTAtOTQ5NS1jOGM3ZmViYzhhZmQiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTU2MjUzMSwiaWF0IjoxNTYyNTAyfQ.3INUCP4WnG9IkF4H5n5e4Gq-gMnDXueHWDqNmYxy0h8i30QR_-SlNtO7M4Bjzntg4-OiL-WqhKsCpELVBXL25A"
         }
     }
 
@@ -172,9 +171,9 @@ class Checkout extends Component {
             });
 
             xhr.open( "GET", this.props.baseUrl + resourcePath );
-            // xhr.setRequestHeader("accessToken", "Bearer " + sessionStorage.getItem("access-token"));
+            xhr.setRequestHeader("accessToken", "Bearer " + sessionStorage.getItem("access-token"));
             xhr.setRequestHeader("Content-Type", "application/json")
-            xhr.setRequestHeader("accessToken", this.state.accessToken);
+           
             xhr.send(data);
 
             xhr1.addEventListener("readystatechange", function () {
@@ -408,7 +407,7 @@ class Checkout extends Component {
 
         xhr.open("POST", this.props.baseUrl + resourcePath3 + "?" + parameters);
         xhr.setRequestHeader("Content-Type", "application/json")
-        // xhr.setRequestHeader("accessToken", "Bearer " + sessionStorage.getItem("access-token"));
+        xhr.setRequestHeader("accessToken", "Bearer " + sessionStorage.getItem("access-token"));
         xhr.send(itemQuantities);
 
     }

@@ -1,95 +1,58 @@
-/*  grey Header   */
+/*  grey Header & Header containers for logo, searchbox, login button &  user profile    */
+.header-main-container {
+    background-color:#263238;
+    height: 36px;
+    padding: 8px 32px 8px 16px;
+    display: flex;
+    justify-content: space-between;
+}
+.header-logo-container, .header-search-container, .header-login-btn-container, .header-user-profile-container {
+  align-self: center;
+}
 
-
+/* fastfood logo css */
 .fastfood-icon-container {
     float: left;
     color:white;
 }
 
+/* searchBox */
 .search-icon-container {
     display: flex;
     border-radius: 4px;
     width:300px;
 }
+.search-icon {
+  align-self: center;
+  color:white;
+}
 #search-input {
     color:white;
 }
-
-.MuiInputBase-root.MuiInput-root.MuiInput-underline {
-    width: 250px;
-    color: black;
-    
-}
-
-.search-icon {
-    align-self: center;
-    color:white;
-}
-
 .search-text-input {
-    padding: 0px 4px 4px 0px;
-    font-size: 15px;
-    width:300px;
-    
+  padding: 0px 4px 4px 0px;
+  font-size: 15px;
+  width:300px;
+  
 }
-
-/*  login button to float right  */
-
-
-/* .login-button-container {
-    float: right;
-} */
-
+.MuiInputBase-root.MuiInput-root.MuiInput-underline {
+  width: 250px;
+  color: black;
+  
+}
 
 /*  account circle icon having a padding on right   */
-
 .accountCircle-logo {
-    padding-right: 6%;
-}
-/*css for login/signup tabs */
-
-.tabs {
-    margin: 20px;
-}
-/*
-.dispNone {
-    display: none;
+  padding-right: 6%;
 }
 
-.dispBlock {
-    display: block;
-}
-.red {
-    color:red;
+/*  login button to float right  
+
+.login-button-container {
+    float: right;
 }*/
 
-@media (max-width:600px) {
-    header {
-        flex-direction: column;
-        height: 100%;
-    }
-    .app-header-container {
-        background-color: #263238;
-        height: 100%;
-    }
-    .search-icon-container {
-        float: left;
-    }
-}
-.header-main-container {
-    background-color: #263238;
-    height: 36px;
-    padding: 8px 32px 8px 16px;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .header-logo-container, .header-search-container, .header-login-btn-container, .header-profile-btn-container {
-    align-self: center;
-  }
-
-
-  /* user profile icon */
+/* user profile icon */
 #user-profile {
   display:flex;
   flex-direction: row;
@@ -120,9 +83,21 @@
 }
 
 /*css to make the header responsive */
-  
 
-  
+@media (max-width:600px) {
+    header {
+        flex-direction: column;
+        height: 100%;
+    }
+    .app-header-container {
+        background-color: #263238;
+        height: 100%;
+    }
+    .search-icon-container {
+        float: left;
+    }
+}
+
   .user-profile-drop-down {
     position: absolute;
     right: 16px;
@@ -138,15 +113,6 @@
     color: #000;
     cursor: pointer;
   }
-  
-  /* @media (max-width: 992px) {
-    .flexHeader {
-      flex-direction: column;
-    }
-    .flexHeaderNoLink {
-      flex-direction: column;
-    }
-    .headerPadding {
-      height: 64px;
-    }
-  } */
+    
+
+  /* All the css in header  is checked  */
