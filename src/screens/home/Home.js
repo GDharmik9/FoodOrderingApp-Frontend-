@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React,  { Component } from "react";
 import "./Home.css";
 import * as Constants from "../../common/Constants";
 import * as Utils from "../../common/Utils";
@@ -11,6 +11,7 @@ import RestaurantCard from "./RestaurantCard";
 import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+
 
 
 // inline styles for Material-UI components
@@ -29,8 +30,8 @@ class Home extends Component {
 
  /* constructor() {
     super();
-    //this.searchRestaurantByRestaurantName = this.searchRestaurantByRestaurantName.bind(this);
-    //this.getRestaurantByRestaurantName = this.getRestaurantByRestaurantName.bind(this);
+    this.searchRestaurantByRestaurantName = this.searchRestaurantByRestaurantName.bind(this);
+    this.getRestaurantByRestaurantName = this.getRestaurantByRestaurantName.bind(this);
   }*/
   state = {
     isRestaurantDataLoaded: false,
@@ -49,6 +50,7 @@ class Home extends Component {
     this.getAllRestaurantData();
     this.getRestaurantByRestaurantName();
   }
+
 
 /**
   * Function to get all the restaurant data on the home page
@@ -110,7 +112,12 @@ class Home extends Component {
       () => { }
   );
 };
-  
+
+
+
+restaurantDetailClickHandler = (restaurantId) => {
+  this.props.history.push('/restaurant/' + restaurantId );
+}
 
   /**
    * Function called when the component is rendered
@@ -130,6 +137,7 @@ class Home extends Component {
       <div>
         <div>
           <Header
+            id={this.props.match.params.id}
             showLink={true}
             showSearch={true}
             searchImageByDescription={this.searchImageByDescription}
@@ -142,11 +150,11 @@ class Home extends Component {
           <div className={classes.root}>
             <GridList cellHeight={400} className={classes.gridListMain} cols={4}>
               {this.state.restaurantData.map(restaurant => (
-                <GridListTile key={"restaurant" + restaurant.id} cols={restaurant.cols || 1}>
-                  <Grid container className={classes.root} >
-                    <Grid item>
+                <GridListTile onClick={() => this.restaurantDetailClickHandler(restaurant.id)} key={"restaurant" + restaurant.id}  cols={restaurant.cols || 1} >
+                  <Grid container className={classes.root}  >
+                    <Grid item >
                       <RestaurantCard
-                        restaurant={restaurant}
+                        restaurant={restaurant} 
                       />
                     </Grid>
                   </Grid>
